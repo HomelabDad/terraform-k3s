@@ -1,10 +1,12 @@
 # Setup Guide
 
-This guide provides detailed instructions for setting up the monitoring stack on your K3s cluster.
+This guide provides detailed instructions for setting up the monitoring stack on
+your K3s cluster.
 
 ## Prerequisites Setup
 
 1. **K3s Cluster**
+
    - Ensure your K3s cluster is running on Proxmox
    - Verify cluster access:
      ```bash
@@ -12,6 +14,7 @@ This guide provides detailed instructions for setting up the monitoring stack on
      ```
 
 2. **Terraform Installation**
+
    - Install Terraform >= 1.0.0
    - Verify installation:
      ```bash
@@ -28,11 +31,13 @@ This guide provides detailed instructions for setting up the monitoring stack on
 ## Configuration Steps
 
 1. **Kubeconfig Setup**
+
    - Ensure your kubeconfig is properly configured
    - Default location: `~/.kube/config`
    - You can specify a custom path in `variables.tf`
 
 2. **Namespace Configuration**
+
    - Default namespace: `monitoring`
    - Can be customized in `variables.tf`
 
@@ -43,11 +48,13 @@ This guide provides detailed instructions for setting up the monitoring stack on
 ## Deployment
 
 1. **Initialize Terraform**
+
    ```bash
    terraform init
    ```
 
 2. **Review Configuration**
+
    ```bash
    terraform plan
    ```
@@ -60,12 +67,14 @@ This guide provides detailed instructions for setting up the monitoring stack on
 ## Post-Deployment
 
 1. **Verify Deployment**
+
    ```bash
    kubectl get pods -n monitoring
    kubectl get services -n monitoring
    ```
 
 2. **Access Services**
+
    - Get Prometheus URL:
      ```bash
      kubectl get svc -n monitoring prometheus-operated
@@ -82,6 +91,7 @@ This guide provides detailed instructions for setting up the monitoring stack on
 ## Troubleshooting
 
 1. **Common Issues**
+
    - Check pod status:
      ```bash
      kubectl describe pods -n monitoring
@@ -101,13 +111,15 @@ This guide provides detailed instructions for setting up the monitoring stack on
 ## Maintenance
 
 1. **Updating Components**
+
    - Update chart versions in `variables.tf`
    - Run terraform plan and apply
 
 2. **Backup**
+
    - Regularly backup Grafana dashboards
    - Export Prometheus rules and alerts
 
 3. **Monitoring the Monitor**
    - Set up alerts for monitoring stack health
-   - Monitor disk usage for Prometheus storage 
+   - Monitor disk usage for Prometheus storage

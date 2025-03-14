@@ -1,6 +1,8 @@
 # Terraform K3s Monitoring Stack
 
-This Terraform project deploys a comprehensive monitoring stack to a K3s cluster running on Proxmox. The stack includes Prometheus and Grafana for monitoring and visualization.
+This Terraform project deploys a comprehensive monitoring stack to a K3s cluster
+running on Proxmox. The stack includes Prometheus and Grafana for monitoring and
+visualization.
 
 ## Prerequisites
 
@@ -38,12 +40,14 @@ terraform-k3s-monitoring/
 ## Quick Start
 
 1. Clone this repository:
+
    ```bash
    git clone <repository-url>
    cd terraform-k3s-monitoring
    ```
 
 2. Initialize Terraform:
+
    ```bash
    terraform init
    ```
@@ -51,6 +55,7 @@ terraform-k3s-monitoring/
 3. Review and modify variables in `variables.tf` as needed.
 
 4. Validate the configuration:
+
    ```bash
    ./scripts/terraform_validate.sh
    ```
@@ -64,13 +69,15 @@ terraform-k3s-monitoring/
 
 After successful deployment:
 
-- Prometheus will be available at: `http://prometheus.<namespace>.svc.cluster.local:9090`
+- Prometheus will be available at:
+  `http://prometheus.<namespace>.svc.cluster.local:9090`
 - Grafana will be available at: `http://grafana.<namespace>.svc.cluster.local`
 
 ## Configuration
 
 - Modify `variables.tf` to customize the deployment
-- Additional Prometheus scrape configs can be added in the monitoring-stack module
+- Additional Prometheus scrape configs can be added in the monitoring-stack
+  module
 - Custom Grafana dashboards can be added to the monitoring-stack module
 
 ## Contributing
@@ -79,4 +86,5 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the LICENSE file for
+details.

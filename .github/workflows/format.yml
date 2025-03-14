@@ -1,0 +1,44 @@
+name: 'Format'
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  format:
+    name: 'Format Code'
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.head_ref }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install Prettier
+      run: npm install -g prettier
+
+    - name: Format files
+      run: |
+        prettier --write "**/*.md" --prose-wrap always --print-width 80
+
+    - name: Check for changes
+      id: git-check
+      run: |
+        git diff --exit-code || echo "changes=true" >> $GITHUB_OUTPUT
+
+    - name: Commit changes
+      if: steps.git-check.outputs.changes == 'true'
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git commit -am "chore: format markdown files"
+        git push 
