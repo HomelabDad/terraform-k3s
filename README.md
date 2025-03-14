@@ -20,7 +20,7 @@ visualization.
 
 ## Directory Structure
 
-```
+```text
 terraform-k3s-monitoring/
 ├── README.md
 ├── .gitignore
@@ -61,6 +61,7 @@ terraform-k3s-monitoring/
    ```
 
 5. Apply the configuration:
+
    ```bash
    ./scripts/terraform_apply.sh
    ```
