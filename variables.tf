@@ -13,11 +13,11 @@ variable "monitoring_namespace" {
 variable "prometheus_helm_chart_version" {
   description = "Version of the Prometheus Helm chart to install"
   type        = string
-  default     = "25.8.0"  # Update this to the latest stable version as needed
+  default     = "25.8.0" # Update this to the latest stable version as needed
 }
 
 variable "grafana_helm_chart_version" {
   description = "Version of the Grafana Helm chart to install"
   type        = string
-  default     = "7.0.19"  # Update this to the latest stable version as needed
+  default     = "7.0.19" # Update this to the latest stable version as needed
 } 
