@@ -1,15 +1,22 @@
-name: 'Format'
+name: 'Format and Lint'
 
 on:
   pull_request:
     branches:
       - main
       - develop
+    paths:
+      - '**/*.md'
+      - '.markdownlint.json'
+      - '.prettierrc'
 
 jobs:
   format:
-    name: 'Format Code'
+    name: 'Format Markdown'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
 
     steps:
     - name: Checkout
@@ -18,27 +25,22 @@ jobs:
         ref: ${{ github.head_ref }}
         token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
+    - name: Format with Prettier
+      uses: creyD/prettier_action@v4.3
       with:
-        node-version: '20'
+        prettier_options: --write **/*.md --prose-wrap always --print-width 80
+        commit_message: "style: format markdown files"
+        only_changed: true
 
-    - name: Install Prettier
-      run: npm install -g prettier
-
-    - name: Format files
-      run: |
-        prettier --write "**/*.md" --prose-wrap always --print-width 80
-
-    - name: Check for changes
-      id: git-check
-      run: |
-        git diff --exit-code || echo "changes=true" >> $GITHUB_OUTPUT
-
-    - name: Commit changes
-      if: steps.git-check.outputs.changes == 'true'
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git commit -am "chore: format markdown files"
-        git push 
+    - name: Add PR comment
+      if: steps.prettier.outputs.prettier_output != ''
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.name,
+            body: '✨ Markdown files have been automatically formatted for consistency.'
+          }) 

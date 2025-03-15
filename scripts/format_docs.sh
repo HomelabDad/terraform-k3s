@@ -1,13 +1,7 @@
 #!/bin/bash
 
-# Check if prettier is installed
-if ! command -v prettier &> /dev/null; then
-    echo "Prettier is not installed. Installing..."
-    npm install -g prettier
-fi
-
-# Format all markdown files
-echo "Formatting markdown files..."
+# Format markdown files using Prettier
 prettier --write "**/*.md" --prose-wrap always --print-width 80
 
-echo "Formatting complete!" 
+# Show success message
+echo "✨ Markdown files have been formatted!" 

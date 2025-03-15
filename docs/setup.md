@@ -9,6 +9,7 @@ your K3s cluster.
 
    - Ensure your K3s cluster is running on Proxmox
    - Verify cluster access:
+
      ```bash
      kubectl cluster-info
      ```
@@ -17,13 +18,16 @@ your K3s cluster.
 
    - Install Terraform >= 1.0.0
    - Verify installation:
+
      ```bash
      terraform --version
      ```
 
 3. **Helm Installation**
+
    - Install Helm 3.x
    - Verify installation:
+
      ```bash
      helm version
      ```
@@ -42,6 +46,7 @@ your K3s cluster.
    - Can be customized in `variables.tf`
 
 3. **Helm Charts Configuration**
+
    - Prometheus chart version can be updated in `variables.tf`
    - Grafana chart version can be updated in `variables.tf`
 
@@ -60,6 +65,7 @@ your K3s cluster.
    ```
 
 3. **Apply Configuration**
+
    ```bash
    terraform apply
    ```
@@ -76,15 +82,19 @@ your K3s cluster.
 2. **Access Services**
 
    - Get Prometheus URL:
+
      ```bash
      kubectl get svc -n monitoring prometheus-operated
      ```
+
    - Get Grafana URL:
+
      ```bash
      kubectl get svc -n monitoring grafana
      ```
 
 3. **Configure Access**
+
    - Set up ingress or port forwarding as needed
    - Default Grafana admin credentials will be output after deployment
 
@@ -93,19 +103,25 @@ your K3s cluster.
 1. **Common Issues**
 
    - Check pod status:
+
      ```bash
      kubectl describe pods -n monitoring
      ```
+
    - View logs:
+
      ```bash
      kubectl logs -n monitoring <pod-name>
      ```
 
 2. **Resource Constraints**
+
    - Monitor resource usage:
+
      ```bash
      kubectl top pods -n monitoring
      ```
+
    - Adjust resource limits in Helm values if needed
 
 ## Maintenance
@@ -121,5 +137,6 @@ your K3s cluster.
    - Export Prometheus rules and alerts
 
 3. **Monitoring the Monitor**
+
    - Set up alerts for monitoring stack health
    - Monitor disk usage for Prometheus storage
