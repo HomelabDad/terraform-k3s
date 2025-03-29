@@ -34,6 +34,28 @@ prometheus:
       limits:
         memory: 512Mi
         cpu: 200m
+    additionalScrapeConfigs:
+      - job_name: 'snmp'
+        static_configs:
+          - targets:
+            - 'snmp-exporter:9116'
+        metrics_path: '/snmp'
+        params:
+          module: [pfsense]
+          target: ['pfsense.vermillion.local']
+        relabel_configs:
+          - source_labels: [__address__]
+            target_label: __param_target
+          - source_labels: [__param_target]
+            target_label: instance
+          - action: labelmap
+            regex: __meta_snmp_(.+)
+      - job_name: 'node'
+        static_configs:
+          - targets: ['node-exporter:9100']
+      - job_name: 'cadvisor'
+        static_configs:
+          - targets: ['cadvisor:8080']
 
 kubeStateMetrics:
   enabled: true
@@ -42,4 +64,26 @@ nodeExporter:
   enabled: true
 
 prometheusOperator:
-  enabled: true 
+  enabled: true
+
+snmpExporter:
+  enabled: true
+  config:
+    modules:
+      pfsense:
+        walk:
+          - sysUpTime
+          - ifDescr
+          - ifAdminStatus
+          - ifOperStatus
+          - ifHCInOctets
+          - ifHCOutOctets
+          - ifInErrors
+          - ifOutErrors
+        version: 2
+        auth:
+          community: public
+        lookups:
+          - source_indexes: [ifDescr]
+            lookup: ifAlias
+            drop_source_indexes: true 
