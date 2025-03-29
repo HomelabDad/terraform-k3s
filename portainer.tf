@@ -151,6 +151,36 @@ resource "kubernetes_service" "portainer" {
       name        = "edge"
     }
 
-    type = "LoadBalancer"
+    type = "ClusterIP"
+  }
+}
+
+# Portainer Ingress
+resource "kubernetes_ingress_v1" "portainer" {
+  metadata {
+    name      = "portainer"
+    namespace = kubernetes_namespace.portainer.metadata[0].name
+  }
+
+  spec {
+    ingress_class_name = "traefik"
+
+    rule {
+      host = "portainer.vermillion.local"
+      http {
+        path {
+          path      = "/"
+          path_type = "Prefix"
+          backend {
+            service {
+              name = kubernetes_service.portainer.metadata[0].name
+              port {
+                number = 9000
+              }
+            }
+          }
+        }
+      }
+    }
   }
 } 

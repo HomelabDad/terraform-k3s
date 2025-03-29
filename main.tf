@@ -15,20 +15,6 @@ resource "helm_release" "prometheus" {
     file("${path.module}/modules/monitoring-stack/prometheus-values.yaml")
   ]
 
-  # Enable Grafana Ingress
-  set {
-    name  = "grafana.ingress.enabled"
-    value = "true"
-  }
-  set {
-    name  = "grafana.ingress.ingressClassName"
-    value = "traefik"
-  }
-  set {
-    name  = "grafana.ingress.hosts[0]"
-    value = "grafana.local"
-  }
-
   # Enable Prometheus Ingress
   set {
     name  = "prometheus.ingress.enabled"
@@ -40,7 +26,15 @@ resource "helm_release" "prometheus" {
   }
   set {
     name  = "prometheus.ingress.hosts[0]"
-    value = "prometheus.local"
+    value = "prometheus.vermillion.local"
+  }
+  set {
+    name  = "prometheus.ingress.path"
+    value = "/"
+  }
+  set {
+    name  = "prometheus.ingress.pathType"
+    value = "Prefix"
   }
 
   depends_on = [helm_release.traefik]
@@ -56,6 +50,28 @@ resource "helm_release" "grafana" {
   values = [
     file("${path.module}/modules/monitoring-stack/grafana-values.yaml")
   ]
+
+  # Enable Grafana Ingress
+  set {
+    name  = "ingress.enabled"
+    value = "true"
+  }
+  set {
+    name  = "ingress.ingressClassName"
+    value = "traefik"
+  }
+  set {
+    name  = "ingress.hosts[0]"
+    value = "grafana.vermillion.local"
+  }
+  set {
+    name  = "ingress.path"
+    value = "/"
+  }
+  set {
+    name  = "ingress.pathType"
+    value = "Prefix"
+  }
 
   depends_on = [kubernetes_namespace.monitoring]
 } 

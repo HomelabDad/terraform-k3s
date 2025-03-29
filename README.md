@@ -1,8 +1,8 @@
 # Terraform K3s Monitoring Stack
 
-This Terraform project deploys a comprehensive monitoring stack to a K3s cluster
-running on Proxmox. The stack includes Prometheus and Grafana for monitoring and
-visualization.
+This Terraform project deploys a comprehensive infrastructure and monitoring stack to a K3s cluster
+running on Proxmox. The stack includes essential components for cluster management, monitoring,
+load balancing, and visualization.
 
 ## Prerequisites
 
@@ -11,10 +11,17 @@ visualization.
 - `kubectl` configured with access to your K3s cluster
 - Helm 3.x installed
 
-## Components
+## Core Components
 
-- Prometheus (via kube-prometheus-stack)
-- Grafana
+### Infrastructure
+- MetalLB - Bare metal load balancer for Kubernetes
+- Cert-Manager - Certificate management for Kubernetes
+- Nginx Ingress Controller - Kubernetes ingress controller
+
+### Monitoring & Management
+- Prometheus (via kube-prometheus-stack) - Metrics collection and storage
+- Grafana - Metrics visualization and dashboards
+- Portainer - Container management UI
 - Custom dashboards for K3s monitoring
 - Additional scrape configurations
 
@@ -68,18 +75,33 @@ terraform-k3s-monitoring/
 
 ## Accessing the Services
 
-After successful deployment:
+After successful deployment, you can access the services using port forwarding:
 
-- Prometheus will be available at:
-  `http://prometheus.<namespace>.svc.cluster.local:9090`
-- Grafana will be available at: `http://grafana.<namespace>.svc.cluster.local`
+### For Grafana (Monitoring)
+```bash
+kubectl port-forward -n monitoring svc/grafana 3000:80
+```
+Access at: `http://localhost:3000`
+
+### For Prometheus (Metrics)
+```bash
+kubectl port-forward -n monitoring svc/prometheus-kube-prometheus-prometheus 9090:9090
+```
+Access at: `http://localhost:9090`
+
+### For Portainer (Container Management)
+```bash
+kubectl port-forward -n portainer svc/portainer 9443:9443
+```
+Access at: `https://localhost:9443`
 
 ## Configuration
 
 - Modify `variables.tf` to customize the deployment
-- Additional Prometheus scrape configs can be added in the monitoring-stack
-  module
+- Additional Prometheus scrape configs can be added in the monitoring-stack module
 - Custom Grafana dashboards can be added to the monitoring-stack module
+- MetalLB configuration can be adjusted for your specific network requirements
+- Ingress configurations can be modified in the respective Terraform configurations
 
 ## Contributing
 
@@ -89,3 +111,13 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 This project is licensed under the MIT License - see the LICENSE file for
 details.
+
+## Initial Setup Note
+
+To manage the cluster from your local machine, copy the K3s configuration using:
+
+```bash
+ssh -i ~/.ssh/id_rsa ubuntu@10.27.3.100 'sudo cat /etc/rancher/k3s/k3s.yaml' > ~/.kube/config
+```
+
+Remember to update the IP address to match your K3s control node.
