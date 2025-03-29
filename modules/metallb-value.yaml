@@ -1,0 +1,6 @@
+configInline:
+  address-pools:
+  - name: default
+    protocol: layer2
+    addresses:
+    - 10.27.3.200-10.27.3.245  # Modify this based on your network

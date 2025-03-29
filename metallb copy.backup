@@ -1,0 +1,52 @@
+resource "helm_release" "metallb" {
+  name             = "metallb"
+  repository       = "https://metallb.github.io/metallb"
+  chart            = "metallb"
+  namespace        = "metallb-system"
+  create_namespace = true
+  version          = "0.13.12"
+  values = [
+    file("${path.module}/modules/metallb-value.yaml")
+  ]
+  wait = true
+  wait_for_jobs = true
+}
+
+# Ensure CRDs are installed before applying configurations
+resource "null_resource" "wait_for_metallb" {
+  depends_on = [helm_release.metallb]
+
+  provisioner "local-exec" {
+    command = <<EOT
+    kubectl wait --for=condition=Available deployment --all -n metallb-system --timeout=120s
+    EOT
+  }
+}
+
+resource "kubernetes_manifest" "metallb_config" {
+  depends_on = [helm_release.metallb]
+  manifest = {
+    apiVersion = "metallb.io/v1beta1"
+    kind       = "IPAddressPool"
+    metadata = {
+      name      = "metallb-ip-pool"
+      namespace = "metallb-system"
+    }
+    spec = {
+      addresses = ["10.27.3.200-10.27.3.245"] # Modify this based on your subnet
+    }
+  }
+}
+
+resource "kubernetes_manifest" "metallb_l2advertisement" {
+  depends_on = [helm_release.metallb]
+  manifest = {
+    apiVersion = "metallb.io/v1beta1"
+    kind       = "L2Advertisement"
+    metadata = {
+      name      = "metallb-l2"
+      namespace = "metallb-system"
+    }
+    spec = {}
+  }
+}

@@ -15,7 +15,6 @@ resource "helm_release" "prometheus" {
     file("${path.module}/modules/monitoring-stack/prometheus-values.yaml")
   ]
 
-
   # Enable Grafana Ingress
   set {
     name  = "grafana.ingress.enabled"
@@ -23,28 +22,28 @@ resource "helm_release" "prometheus" {
   }
   set {
     name  = "grafana.ingress.ingressClassName"
-    value = "nginx"
+    value = "traefik"
   }
   set {
     name  = "grafana.ingress.hosts[0]"
-    value = "grafana.local"  # Or use something like grafana.192.168.1.240.nip.io
+    value = "grafana.local"
   }
 
-  # Enable Prometheus Ingress (optional)
+  # Enable Prometheus Ingress
   set {
     name  = "prometheus.ingress.enabled"
     value = "true"
   }
   set {
     name  = "prometheus.ingress.ingressClassName"
-    value = "nginx"
+    value = "traefik"
   }
   set {
     name  = "prometheus.ingress.hosts[0]"
-    value = "prometheus.local"  # Or use something like prometheus.192.168.1.240.nip.io
+    value = "prometheus.local"
   }
 
-  depends_on = [helm_release.ingress_nginx]
+  depends_on = [helm_release.traefik]
 }
 
 resource "helm_release" "grafana" {

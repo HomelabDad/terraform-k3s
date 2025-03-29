@@ -1,38 +1,52 @@
-resource "helm_release" "ingress_nginx" {
-  name             = "ingress-nginx"
-  repository       = "https://kubernetes.github.io/ingress-nginx"
-  chart            = "ingress-nginx"
-  namespace        = "ingress-nginx"
+resource "helm_release" "traefik" {
+  name             = "traefik"
+  repository       = "https://traefik.github.io/charts"
+  chart            = "traefik"
+  namespace        = "traefik"
   create_namespace = true
-  version          = "4.9.1"  # Current stable version
+  version          = "24.0.0"  # Check for latest version
 
   # Increase timeout
-  timeout = 900 # 15 minutes instead of default
+  timeout = 900
 
-  set {
-    name  = "controller.service.type"
-    value = "NodePort"
-  }
-
-  # Optional: Configure default SSL certificate
-  # set {
-  #   name  = "controller.defaultTLS.enabled"
-  #   value = "true"
-  # }
-
-  # Reduce resource requests to help with deployment
-  set {
-    name  = "controller.resources.requests.cpu"
-    value = "100m"
-  }
-  set {
-    name  = "controller.resources.requests.memory"
-    value = "128Mi"
-  }
-
-  # Optional: Add image pull policy to help with potential pulling issues
-  set {
-    name  = "controller.image.pullPolicy"
-    value = "IfNotPresent"
-  }
+  values = [
+    <<-EOT
+    deployment:
+      replicas: 1
+    
+    service:
+      type: LoadBalancer
+      # Specify static IP from MetalLB pool range
+      loadBalancerIP: "10.27.3.246"
+      annotations:
+        "metallb.universe.tf/allow-shared-ip": "traefik"
+        "metallb.universe.tf/address-pool": "first-pool"
+    
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "128Mi"
+      limits:
+        cpu: "300m"
+        memory: "256Mi"
+    
+    # Basic dashboard and API configuration
+    ports:
+      web:
+        expose: true
+      websecure:
+        expose: true
+    
+    # Enable dashboard
+    dashboard:
+      enabled: true
+    
+    # Configure logging
+    logs:
+      general:
+        level: INFO
+      access:
+        enabled: true
+    EOT
+  ]
 } 
