@@ -13,4 +13,4 @@ terraform apply tfplan
 # Remove the plan file after apply
 rm tfplan
 
-echo "Deployment complete!" 
+echo "Deployment complete!"

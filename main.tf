@@ -15,7 +15,36 @@ resource "helm_release" "prometheus" {
     file("${path.module}/modules/monitoring-stack/prometheus-values.yaml")
   ]
 
-  depends_on = [kubernetes_namespace.monitoring]
+
+  # Enable Grafana Ingress
+  set {
+    name  = "grafana.ingress.enabled"
+    value = "true"
+  }
+  set {
+    name  = "grafana.ingress.ingressClassName"
+    value = "nginx"
+  }
+  set {
+    name  = "grafana.ingress.hosts[0]"
+    value = "grafana.local"  # Or use something like grafana.192.168.1.240.nip.io
+  }
+
+  # Enable Prometheus Ingress (optional)
+  set {
+    name  = "prometheus.ingress.enabled"
+    value = "true"
+  }
+  set {
+    name  = "prometheus.ingress.ingressClassName"
+    value = "nginx"
+  }
+  set {
+    name  = "prometheus.ingress.hosts[0]"
+    value = "prometheus.local"  # Or use something like prometheus.192.168.1.240.nip.io
+  }
+
+  depends_on = [helm_release.ingress_nginx]
 }
 
 resource "helm_release" "grafana" {

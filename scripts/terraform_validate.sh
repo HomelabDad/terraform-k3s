@@ -18,4 +18,4 @@ terraform validate
 echo "Checking for plan changes..."
 terraform plan -out=tfplan
 
-echo "Validation complete!" 
+echo "Validation complete!"

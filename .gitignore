@@ -53,3 +53,7 @@ terraform.rc
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# terraform artifacts
+tfplan
+*.tfplan
