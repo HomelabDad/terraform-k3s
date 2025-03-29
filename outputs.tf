@@ -3,14 +3,14 @@ output "monitoring_urls" {
   description = "URLs for monitoring services"
   value = {
     prometheus_url = module.monitoring.prometheus_url
-    grafana_url = module.monitoring.grafana_url
+    grafana_url    = module.monitoring.grafana_url
   }
 }
 
 output "monitoring_sensitive" {
   description = "Sensitive monitoring information"
   value = {
-    namespace = module.monitoring.monitoring_namespace
+    namespace              = module.monitoring.monitoring_namespace
     grafana_admin_password = module.monitoring.grafana_admin_password
   }
   sensitive = true
@@ -28,7 +28,7 @@ output "traefik_sensitive" {
 # Portainer Outputs
 output "portainer_url" {
   description = "URL for Portainer service"
-  value = module.portainer.url
+  value       = module.portainer.url
 }
 
 output "portainer_sensitive" {
