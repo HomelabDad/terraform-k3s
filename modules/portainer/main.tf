@@ -57,19 +57,19 @@ resource "kubernetes_deployment" "portainer" {
 
       spec {
         service_account_name = kubernetes_service_account.portainer.metadata[0].name
-        
+
         container {
           name  = "portainer"
           image = "portainer/portainer-ce:latest"
 
           port {
             container_port = 9000
-            name          = "http"
+            name           = "http"
           }
 
           port {
             container_port = 8000
-            name          = "edge"
+            name           = "edge"
           }
 
           volume_mount {

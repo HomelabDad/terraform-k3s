@@ -4,7 +4,7 @@ resource "helm_release" "traefik" {
   chart            = "traefik"
   namespace        = "traefik"
   create_namespace = true
-  version          = "24.0.0"  # Check for latest version
+  version          = "24.0.0" # Check for latest version
 
   # Increase timeout
   timeout = 900
