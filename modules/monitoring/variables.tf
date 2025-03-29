@@ -1,7 +1,18 @@
-variable "kubeconfig_path" {
-  description = "Path to the kubeconfig file for K3s cluster"
+variable "namespace" {
+  description = "Kubernetes namespace where the monitoring stack will be deployed"
   type        = string
-  default     = "~/.kube/config"
+}
+
+variable "prometheus_additional_scrape_configs" {
+  description = "Additional scrape configurations for Prometheus"
+  type        = string
+  default     = ""
+}
+
+variable "grafana_additional_datasources" {
+  description = "Additional datasources for Grafana"
+  type        = list(map(string))
+  default     = []
 }
 
 variable "monitoring_namespace" {
@@ -20,16 +31,4 @@ variable "grafana_helm_chart_version" {
   description = "Version of the Grafana Helm chart to install"
   type        = string
   default     = "6.59.0"
-}
-
-variable "prometheus_additional_scrape_configs" {
-  description = "Additional scrape configurations for Prometheus"
-  type        = string
-  default     = ""
-}
-
-variable "grafana_additional_datasources" {
-  description = "Additional datasources for Grafana"
-  type        = list(map(string))
-  default     = []
-}
+} 
