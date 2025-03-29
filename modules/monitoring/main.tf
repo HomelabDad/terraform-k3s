@@ -12,7 +12,7 @@ resource "helm_release" "prometheus" {
   namespace  = kubernetes_namespace.monitoring.metadata[0].name
 
   values = [
-    file("${path.module}/modules/monitoring-stack/prometheus-values.yaml")
+    file("${path.module}/prometheus-values.yaml")
   ]
 
   # Enable Prometheus Ingress
@@ -37,7 +37,7 @@ resource "helm_release" "prometheus" {
     value = "Prefix"
   }
 
-  depends_on = [helm_release.traefik]
+  depends_on = [var.traefik_module]
 }
 
 resource "helm_release" "grafana" {
@@ -48,7 +48,7 @@ resource "helm_release" "grafana" {
   namespace  = kubernetes_namespace.monitoring.metadata[0].name
 
   values = [
-    file("${path.module}/modules/monitoring-stack/grafana-values.yaml")
+    file("${path.module}/grafana-values.yaml")
   ]
 
   # Enable Grafana Ingress

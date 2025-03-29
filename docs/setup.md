@@ -1,71 +1,52 @@
 # Setup Guide
 
-This guide provides detailed instructions for setting up the monitoring stack on
-your K3s cluster.
+This guide provides detailed instructions for setting up your K3s cluster infrastructure using Terraform.
 
 ## Prerequisites Setup
 
 1. **K3s Cluster**
-
-   - Ensure your K3s cluster is running on Proxmox
+   - Ensure your K3s cluster is running
    - Verify cluster access:
-
      ```bash
      kubectl cluster-info
      ```
 
 2. **Terraform Installation**
-
    - Install Terraform >= 1.0.0
    - Verify installation:
-
      ```bash
      terraform --version
-     ```
-
-3. **Helm Installation**
-
-   - Install Helm 3.x
-   - Verify installation:
-
-     ```bash
-     helm version
      ```
 
 ## Configuration Steps
 
 1. **Kubeconfig Setup**
-
    - Ensure your kubeconfig is properly configured
    - Default location: `~/.kube/config`
    - You can specify a custom path in `variables.tf`
 
-2. **Namespace Configuration**
+2. **Module Configuration**
+   The project includes the following modules:
+   - **Monitoring**: Prometheus and Grafana stack
+   - **MetalLB**: Load balancer for bare metal clusters
+   - **Traefik**: Ingress controller
+   - **Portainer**: Container management UI
 
-   - Default namespace: `monitoring`
-   - Can be customized in `variables.tf`
-
-3. **Helm Charts Configuration**
-
-   - Prometheus chart version can be updated in `variables.tf`
-   - Grafana chart version can be updated in `variables.tf`
+   Each module can be configured through its respective variables in the module directory.
 
 ## Deployment
 
 1. **Initialize Terraform**
-
    ```bash
    terraform init
    ```
 
 2. **Review Configuration**
-
    ```bash
    terraform plan
    ```
 
 3. **Apply Configuration**
-
    ```bash
    terraform apply
    ```
@@ -73,70 +54,79 @@ your K3s cluster.
 ## Post-Deployment
 
 1. **Verify Deployment**
-
    ```bash
-   kubectl get pods -n monitoring
-   kubectl get services -n monitoring
+   kubectl get pods -A
+   kubectl get services -A
    ```
 
 2. **Access Services**
-
-   - Get Prometheus URL:
-
+   - Get Portainer URL:
      ```bash
-     kubectl get svc -n monitoring prometheus-operated
+     kubectl get svc -n portainer portainer
      ```
-
-   - Get Grafana URL:
-
+   - Get Traefik Dashboard:
      ```bash
-     kubectl get svc -n monitoring grafana
+     kubectl get svc -n traefik traefik
+     ```
+   - Get Monitoring Stack:
+     ```bash
+     kubectl get svc -n monitoring
      ```
 
 3. **Configure Access**
-
-   - Set up ingress or port forwarding as needed
-   - Default Grafana admin credentials will be output after deployment
+   - MetalLB will automatically assign external IPs to services
+   - Configure DNS resolution:
+     - Option 1: Add entries to your local hosts file
+     - Option 2: Configure DNS resolution in your router
+     - Option 3: Set up Pi-hole with local DNS records
+   - Services can be accessed via their DNS names once configured
+   - Default credentials will be output after deployment
 
 ## Troubleshooting
 
 1. **Common Issues**
-
    - Check pod status:
-
      ```bash
-     kubectl describe pods -n monitoring
+     kubectl describe pods -n <namespace>
      ```
-
    - View logs:
-
      ```bash
-     kubectl logs -n monitoring <pod-name>
+     kubectl logs -n <namespace> <pod-name>
      ```
 
 2. **Resource Constraints**
-
    - Monitor resource usage:
-
      ```bash
-     kubectl top pods -n monitoring
+     kubectl top pods -A
      ```
-
-   - Adjust resource limits in Helm values if needed
+   - Adjust resource limits in module configurations if needed
 
 ## Maintenance
 
 1. **Updating Components**
-
-   - Update chart versions in `variables.tf`
+   - Update module versions in respective module directories
    - Run terraform plan and apply
 
 2. **Backup**
+   - Regularly backup Portainer configurations
+   - Export monitoring dashboards and alerts
+   - Backup Terraform state file
 
-   - Regularly backup Grafana dashboards
-   - Export Prometheus rules and alerts
+3. **Monitoring**
+   - Use the monitoring stack to track cluster health
+   - Monitor MetalLB IP allocation
+   - Track Traefik ingress traffic
 
-3. **Monitoring the Monitor**
+## Project Structure
 
-   - Set up alerts for monitoring stack health
-   - Monitor disk usage for Prometheus storage
+```
+.
+├── modules/
+│   ├── monitoring/    # Prometheus and Grafana stack
+│   ├── metallb/       # Load balancer configuration
+│   ├── traefik/       # Ingress controller
+│   └── portainer/     # Container management UI
+├── scripts/           # Utility scripts
+├── docs/             # Documentation
+└── main.tf           # Main Terraform configuration
+```

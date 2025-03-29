@@ -31,4 +31,9 @@ variable "grafana_helm_chart_version" {
   description = "Version of the Grafana Helm chart to install"
   type        = string
   default     = "6.59.0"
+}
+
+variable "traefik_module" {
+  description = "Reference to the Traefik module"
+  type        = any
 } 

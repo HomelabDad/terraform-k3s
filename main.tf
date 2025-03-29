@@ -1,6 +1,7 @@
 module "monitoring" {
-  source    = "./modules/monitoring"
-  namespace = "monitoring"
+  source         = "./modules/monitoring"
+  namespace      = "monitoring"
+  traefik_module = module.traefik
 }
 
 module "metallb" {

@@ -1,3 +1,11 @@
+terraform {
+  required_providers {
+    kubectl = {
+      source = "gavinbunney/kubectl"
+    }
+  }
+}
+
 resource "helm_release" "metallb" {
   name             = "metallb"
   repository       = "https://metallb.github.io/metallb"
