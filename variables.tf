@@ -9,3 +9,9 @@ variable "traefik_load_balancer_ip" {
   type        = string
   default     = null
 }
+
+variable "metallb_ip_range" {
+  description = "The IP address range for MetalLB (format: start-end)"
+  type        = string
+  default     = null
+}
