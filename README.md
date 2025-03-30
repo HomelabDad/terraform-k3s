@@ -59,15 +59,24 @@ terraform-k3s-monitoring/
    terraform init
    ```
 
-3. Review and modify variables in `variables.tf` as needed.
+3. Create a `terraform.tfvars` file with your network configuration:
 
-4. Validate the configuration:
+   ```hcl
+   traefik_load_balancer_ip = "your.traefik.ip"
+   metallb_ip_range        = "your.start.ip-your.end.ip"
+   ```
+
+   Note: This file should not be committed to version control as it contains sensitive network information.
+
+4. Review and modify variables in `variables.tf` as needed.
+
+5. Validate the configuration:
 
    ```bash
    ./scripts/terraform_validate.sh
    ```
 
-5. Apply the configuration:
+6. Apply the configuration:
 
    ```bash
    ./scripts/terraform_apply.sh

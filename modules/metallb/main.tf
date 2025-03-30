@@ -28,7 +28,7 @@ metadata:
 spec:
   autoAssign: false
   addresses:
-  - 10.27.3.246-10.27.3.253  # Safe range above DHCP pool
+  - ${var.ip_address_range}
 YAML
 }
 

@@ -26,6 +26,7 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Format with Prettier
+      id: prettier
       uses: creyD/prettier_action@v4.3
       with:
         prettier_options: --write **/*.md --prose-wrap always --print-width 80
