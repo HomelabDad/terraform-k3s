@@ -17,7 +17,7 @@ resource "helm_release" "traefik" {
     service:
       type: LoadBalancer
       # Specify static IP from MetalLB pool range
-      loadBalancerIP: "10.27.3.246"
+      loadBalancerIP: ${var.load_balancer_ip != null ? "\"${var.load_balancer_ip}\"" : "null"}
       annotations:
         "metallb.universe.tf/allow-shared-ip": "traefik"
         "metallb.universe.tf/address-pool": "first-pool"

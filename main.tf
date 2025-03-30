@@ -9,7 +9,8 @@ module "metallb" {
 }
 
 module "traefik" {
-  source = "./modules/traefik"
+  source            = "./modules/traefik"
+  load_balancer_ip  = var.traefik_load_balancer_ip
 }
 
 module "portainer" {
