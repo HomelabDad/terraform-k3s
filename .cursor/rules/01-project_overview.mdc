@@ -1,0 +1,100 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: Rules and guidelines for building Terraform infrastructure for Kubernetes clusters
+globs: ["**/*.tf", "**/*.tfvars"]
+alwaysApply: true
+---
+# Project Overview: Terraform Kubernetes Infrastructure
+
+## Context
+This project provides a set of rules and guidelines for building and maintaining Terraform infrastructure for Kubernetes clusters. These rules ensure consistent, secure, and maintainable infrastructure as code practices.
+
+## Project Structure
+The infrastructure code follows a modular approach, with each component serving a specific purpose in the Kubernetes cluster deployment.
+
+## Technology Stack
+- `terraform` for infrastructure as code
+- `kubernetes` for container orchestration
+- `helm` for package management
+- `terratest` for infrastructure testing
+- `tflint` for Terraform linting
+- `pre-commit` for pre-commit hooks
+- GitHub Actions for CI/CD pipeline
+
+## Repository Organization
+```
+├── modules/              # Reusable Terraform modules
+│   ├── networking/      # Network infrastructure
+│   ├── compute/         # Compute resources
+│   └── kubernetes/      # Kubernetes-specific resources
+├── environments/        # Environment-specific configurations
+│   ├── dev/            # Development environment
+│   ├── staging/        # Staging environment
+│   └── production/     # Production environment
+├── examples/           # Example configurations
+├── tests/             # Infrastructure tests
+└── docs/              # Documentation
+```
+
+## Infrastructure Rules
+
+### Design Principles
+1. **Modularity**
+   - Break down infrastructure into reusable modules
+   - Each module should have a single responsibility
+   - Use module composition for complex deployments
+
+2. **State Management**
+   - Always use remote state storage
+   - Implement state locking mechanisms
+   - Never store sensitive data in state files
+
+3. **Resource Organization**
+   - Group related resources in the same module
+   - Use consistent naming conventions
+   - Implement proper tagging strategy
+
+### Security Requirements
+1. **Access Control**
+   - Implement least privilege principle
+   - Use IAM roles and policies
+   - Secure sensitive variables
+
+2. **Network Security**
+   - Implement network segmentation
+   - Use security groups/NSGs
+   - Enable encryption in transit
+
+3. **Secret Management**
+   - Use secret management services
+   - Never hardcode credentials
+   - Rotate secrets regularly
+
+## Development Workflow
+1. Create feature branch from main
+2. Develop and test changes locally
+3. Run pre-commit hooks and tests
+4. Create pull request with documentation
+5. Review and merge after approval
+
+## Testing Requirements
+- All modules must have unit tests
+- Integration tests for complex deployments
+- Security scanning for infrastructure code
+- Compliance checks for cloud resources
+
+## Documentation Standards
+- Each module must have README.md
+- Document all variables and outputs
+- Include usage examples
+- Provide architecture diagrams
+
+## Version Management
+- Use semantic versioning for modules
+- Pin provider versions
+- Document breaking changes
+- Maintain changelog 
