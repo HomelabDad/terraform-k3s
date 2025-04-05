@@ -4,6 +4,16 @@ defaultRules:
     etcd: false
     kubeScheduler: false
 
+# Global settings
+global:
+  storageClass: "local-path"
+
+# Persistent volume settings
+commonPersistenceSettings:
+  enabled: true
+  storageClass: "local-path"
+  size: 1Gi
+
 alertmanager:
   enabled: true
   config:
@@ -20,19 +30,27 @@ alertmanager:
         receiver: 'null'
     receivers:
     - name: 'null'
+  storage:
+    volumeClaimTemplate:
+      spec:
+        storageClassName: "local-path"
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 500Mi  # Reduced from 1Gi
 
 grafana:
   enabled: false  # We're deploying Grafana separately
 
 prometheus:
   prometheusSpec:
-    retention: 10d
+    retention: 7d  # Reduced from 10d to save space
     resources:
       requests:
-        memory: 256Mi
+        memory: 512Mi  # Reduced from 1Gi
         cpu: 100m
       limits:
-        memory: 512Mi
+        memory: 1Gi    # Reduced from 2Gi
         cpu: 200m
     additionalScrapeConfigs:
       - job_name: 'node'
@@ -41,12 +59,62 @@ prometheus:
       - job_name: 'cadvisor'
         static_configs:
           - targets: ['cadvisor:8080']
+    scrapeInterval: 60s  # Increased from 30s to reduce load
+    scrapeTimeout: 10s
+    evaluationInterval: 60s  # Increased from 30s to reduce load
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: "local-path"  # Using K3s default storage class
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 2Gi  # Reduced from 10Gi
+    walCompression: true
+    podAntiAffinity: "soft"
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 65534
+      fsGroup: 65534
+    serviceMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelector: {}
+    serviceMonitorNamespaceSelector: {}
+
+# Allow scheduling even with unbound PVCs
+deployer:
+  schedulerName: default-scheduler
 
 kubeStateMetrics:
   enabled: true
+  resources:
+    limits:
+      memory: 128Mi
+      cpu: 100m
+    requests:
+      memory: 64Mi
+      cpu: 50m
 
 nodeExporter:
   enabled: true
+  resources:
+    limits:
+      memory: 64Mi
+      cpu: 100m
+    requests:
+      memory: 32Mi
+      cpu: 50m
 
 prometheusOperator:
-  enabled: true 
+  enabled: true
+  resources:
+    limits:
+      memory: 256Mi
+      cpu: 200m
+    requests:
+      memory: 128Mi
+      cpu: 100m
+
+# Add this to ensure pods can be scheduled even if PVCs aren't bound yet
+persistence:
+  enabled: true
+  storageClassName: "local-path" 
