@@ -4,6 +4,7 @@ persistence:
   type: pvc
   enabled: true
   size: 10Gi
+  storageClassName: "local-path"
 
 datasources:
   datasources.yaml:
