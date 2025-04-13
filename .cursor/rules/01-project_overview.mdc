@@ -3,11 +3,6 @@ description:
 globs: 
 alwaysApply: true
 ---
----
-description: Rules and guidelines for building Terraform infrastructure for Kubernetes clusters
-globs: ["**/*.tf", "**/*.tfvars"]
-alwaysApply: true
----
 # Project Overview: Terraform Kubernetes Infrastructure
 
 ## Context
