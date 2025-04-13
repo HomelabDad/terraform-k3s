@@ -1,11 +1,7 @@
 ---
-description: 
+description: Mandatory framework for learning from errors and building new rules to improve the knowledge base.
 globs: 
 alwaysApply: false
----
----
-description: Mandatory framework for learning from errors and building new rules to improve the knowledge base.
-type: agent_requested
 ---
 # Self-Learning and Error Correction
 
