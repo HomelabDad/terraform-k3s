@@ -1,6 +1,11 @@
 ---
 description: 
 globs: 
+alwaysApply: false
+---
+---
+description: 
+globs: 
 alwaysApply: true
 ---
 # Project Overview: Terraform Kubernetes Infrastructure
@@ -22,15 +27,12 @@ The infrastructure code follows a modular approach, with each component serving 
 
 ## Repository Organization
 ```
-├── modules/              # Reusable Terraform modules
-│   ├── networking/      # Network infrastructure
-│   ├── compute/         # Compute resources
-│   └── kubernetes/      # Kubernetes-specific resources
-├── environments/        # Environment-specific configurations
-│   ├── dev/            # Development environment
-│   ├── staging/        # Staging environment
-│   └── production/     # Production environment
-├── examples/           # Example configurations
+├── modules/             # terraform modules for deploying applications in k3s 
+│   ├── metallb/         # metallb
+│   ├── monitoring/      # grafana prometheus stack
+│   ├── traefik/         # traefik
+│   └── portainer/       # portainer
+├── scripts/           # deployment scripts
 ├── tests/             # Infrastructure tests
 └── docs/              # Documentation
 ```
