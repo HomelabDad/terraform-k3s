@@ -46,4 +46,30 @@ output "metallb_sensitive" {
     ip_address_pool = module.metallb.ip_address_pool
   }
   sensitive = true
+}
+
+# Minecraft outputs
+output "minecraft_server_ip" {
+  description = "The IP address of the Minecraft server"
+  value       = module.minecraft.minecraft_service_ip
+}
+
+output "minecraft_server_port" {
+  description = "The port of the Minecraft server"
+  value       = module.minecraft.minecraft_port
+}
+
+output "minecraft_dns_name" {
+  description = "The DNS name of the Minecraft server when using Traefik"
+  value       = module.minecraft.minecraft_dns_name
+}
+
+output "minecraft_connection_info" {
+  description = "The connection information for the Minecraft server"
+  value       = var.minecraft_use_traefik ? "${var.traefik_load_balancer_ip}:25565 or ${module.minecraft.minecraft_dns_name}" : "${module.minecraft.minecraft_service_ip != null ? module.minecraft.minecraft_service_ip : "your-server-ip"}:${module.minecraft.minecraft_port}"
+}
+
+output "minecraft_node_access" {
+  description = "Alternative access method via NodePort (when using Traefik)"
+  value       = var.minecraft_use_traefik ? "Use any node IP with port 30565" : null
 } 

@@ -36,6 +36,12 @@ resource "helm_release" "traefik" {
         expose: true
       websecure:
         expose: true
+      # Add Minecraft port
+      minecraft:
+        port: 25565
+        expose: true
+        exposedPort: 25565
+        protocol: TCP
     
     # Enable dashboard
     dashboard:
@@ -47,6 +53,23 @@ resource "helm_release" "traefik" {
         level: INFO
       access:
         enabled: true
+    
+    # Add additional entrypoints
+    additionalEntrypoints:
+      - name: minecraft
+        port: 25565
+        forwardedHeaders:
+          insecure: true
+        
+    # Increase provider settings for TCP routing
+    providers:
+      kubernetesCRD:
+        enabled: true
+        allowCrossNamespace: true
+        allowExternalNameServices: true
+      kubernetesIngress:
+        enabled: true
+        allowExternalNameServices: true
     EOT
   ]
 } 
