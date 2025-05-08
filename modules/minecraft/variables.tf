@@ -43,7 +43,7 @@ variable "memory" {
 variable "storage_class" {
   description = "Storage class for the persistent volume"
   type        = string
-  default     = "local-path"  # Default StorageClass in k3s
+  default     = "local-path" # Default StorageClass in k3s
 }
 
 variable "storage_size" {
