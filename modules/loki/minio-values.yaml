@@ -1,0 +1,65 @@
+# MinIO configuration for Loki storage backend
+persistence:
+  enabled: true
+  size: 50Gi
+  storageClassName: "local-path"
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 250m
+    memory: 512Mi
+
+service:
+  type: ClusterIP
+
+# Enable MinIO Console ingress
+ingress:
+  enabled: true
+  ingressClassName: traefik
+  hosts:
+    - host: minio.vermillion.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+# Security context
+securityContext:
+  enabled: true
+  runAsUser: 1000
+  fsGroup: 1000
+
+# Default bucket creation for Loki
+defaultBuckets: "loki-logs"
+
+# Enable MinIO Console
+console:
+  enabled: true
+  service:
+    type: ClusterIP
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    hosts:
+      - host: minio-console.vermillion.local
+        paths:
+          - path: /
+            pathType: Prefix
+    tls: []
+
+# Metrics for monitoring
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    interval: 30s
+
+# Additional configuration
+extraEnvVars:
+  - name: MINIO_BROWSER_REDIRECT_URL
+    value: "http://minio-console.vermillion.local"
+  - name: MINIO_SERVER_URL
+    value: "http://minio.logging.svc.cluster.local:9000" 

@@ -72,4 +72,25 @@ output "minecraft_connection_info" {
 output "minecraft_node_access" {
   description = "Alternative access method via NodePort (when using Traefik)"
   value       = var.minecraft_use_traefik ? "Use any node IP with port 30565" : null
+}
+
+# Loki Outputs
+output "loki_urls" {
+  description = "URLs for Loki logging services"
+  value = {
+    loki_ingress_url       = module.loki.loki_ingress_url
+    loki_service_endpoint  = module.loki.loki_service_endpoint
+    minio_service_endpoint = module.loki.minio_service_endpoint
+    minio_console_url      = module.loki.minio_console_url
+  }
+}
+
+output "loki_sensitive" {
+  description = "Sensitive Loki information"
+  value = {
+    namespace         = module.loki.namespace
+    minio_credentials = module.loki.minio_credentials
+    s3_bucket         = module.loki.loki_s3_bucket
+  }
+  sensitive = true
 } 

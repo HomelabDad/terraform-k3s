@@ -31,3 +31,8 @@ module "minecraft" {
 
   depends_on = [module.metallb, module.traefik]
 }
+
+module "loki" {
+  source         = "./modules/loki"
+  traefik_module = module.traefik
+}

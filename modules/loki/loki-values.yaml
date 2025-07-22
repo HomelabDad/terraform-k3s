@@ -1,0 +1,121 @@
+# Loki configuration with S3 storage backend
+loki:
+  auth_enabled: false
+  
+  # Storage configuration for S3
+  storage_config:
+    boltdb_shipper:
+      active_index_directory: /loki/index
+      cache_location: /loki/cache
+      cache_ttl: 24h
+      shared_store: s3
+    aws:
+      s3: s3://loki-logs
+      region: us-east-1
+      s3forcepathstyle: true
+      insecure: true
+      endpoint: http://minio.logging.svc.cluster.local:9000
+      access_key_id: minioadmin
+      secret_access_key: minioadmin
+
+  # Retention configuration
+  table_manager:
+    retention_deletes_enabled: true
+    retention_period: 30d
+
+  # Chunk store configuration
+  chunk_store_config:
+    max_look_back_period: 24h
+
+  # Compactor configuration for long-term storage
+  compactor:
+    working_directory: /loki/compactor
+    shared_store: s3
+    compaction_interval: 10m
+    retention_enabled: true
+    retention_delete_delay: 2h
+    retention_delete_worker_count: 150
+
+  # Limits configuration
+  limits_config:
+    enforce_metric_name: false
+    reject_old_samples: true
+    reject_old_samples_max_age: 168h
+    max_cache_freshness_per_query: 10m
+    split_queries_by_interval: 15m
+    max_query_parallelism: 32
+    cardinality_limit: 100000
+    max_streams_per_user: 0
+    max_global_streams_per_user: 0
+    ingestion_rate_mb: 32
+    ingestion_burst_size_mb: 64
+    max_entries_limit_per_query: 5000
+    max_query_series: 500
+    max_query_lookback: 721h
+    max_query_length: 721h
+    max_query_parallelism: 32
+    max_streams_matchers_per_query: 1000
+    max_concurrent_tail_requests: 10
+    max_entries_limit_per_query: 5000
+    max_cache_freshness_per_query: 1m
+    max_queriers_per_tenant: 0
+    ruler:
+      max_rules_per_rule_group: 0
+      max_rule_groups_per_tenant: 0
+
+  # Ruler configuration
+  ruler:
+    alertmanager_url: http://prometheus-kube-prometheus-alertmanager.monitoring:9093
+    ring:
+      kvstore:
+        store: inmemory
+    rule_path: /loki/rules
+    storage:
+      type: s3
+      s3:
+        s3: s3://loki-logs/rules
+        region: us-east-1
+        s3forcepathstyle: true
+        insecure: true
+        endpoint: http://minio.logging.svc.cluster.local:9000
+        access_key_id: minioadmin
+        secret_access_key: minioadmin
+
+  # Persistence
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClassName: "local-path"
+
+  # Resources
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+
+  # Service
+  service:
+    type: ClusterIP
+
+  # Ingress configuration
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    hosts:
+      - host: loki.vermillion.local
+        paths:
+          - path: /
+            pathType: Prefix
+    tls: []
+
+# Grafana datasource configuration
+grafana:
+  enabled: false  # We'll configure this in the monitoring module
+
+# ServiceMonitor for Prometheus
+serviceMonitor:
+  enabled: true
+  interval: 30s 

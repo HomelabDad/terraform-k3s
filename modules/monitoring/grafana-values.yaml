@@ -15,6 +15,10 @@ datasources:
       url: http://prometheus-kube-prometheus-prometheus.monitoring:9090
       access: proxy
       isDefault: true
+    - name: Loki
+      type: loki
+      url: http://loki.logging.svc.cluster.local:3100
+      access: proxy
 
 resources:
   limits:
@@ -54,6 +58,14 @@ dashboards:
       gnetId: 6418
       revision: 1
       datasource: Prometheus
+    loki-overview:
+      gnetId: 12019
+      revision: 1
+      datasource: Loki
+    loki-kubernetes:
+      gnetId: 12020
+      revision: 1
+      datasource: Loki
     network-monitoring:
       json: |
         {

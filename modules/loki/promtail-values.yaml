@@ -1,0 +1,144 @@
+# Promtail configuration for log collection
+config:
+  server:
+    http_listen_port: 9080
+    grpc_listen_port: 0
+  positions:
+    filename: /tmp/positions.yaml
+  clients:
+    - url: http://loki.logging.svc.cluster.local:3100/loki/api/v1/push
+  scrape_configs:
+    # Kubernetes pod logs
+    - job_name: kubernetes-pods
+      kubernetes_sd_configs:
+        - role: pod
+      pipeline_stages:
+        - docker: {}
+      relabel_configs:
+        - source_labels:
+            - __meta_kubernetes_pod_annotation_kubernetes_io_config_mirror
+          action: drop
+          regex: .+
+        - source_labels:
+            - __meta_kubernetes_pod_label_app_kubernetes_io_name
+            - __meta_kubernetes_pod_label_app
+            - __meta_kubernetes_pod_label_name
+          target_label: app
+        - source_labels:
+            - __meta_kubernetes_pod_label_app_kubernetes_io_instance
+            - __meta_kubernetes_pod_label_release
+          target_label: instance
+        - source_labels:
+            - __meta_kubernetes_pod_label_app_kubernetes_io_component
+            - __meta_kubernetes_pod_label_component
+          target_label: component
+        - source_labels:
+            - __meta_kubernetes_pod_label_app_kubernetes_io_part_of
+            - __meta_kubernetes_pod_label_part_of
+          target_label: part_of
+        - source_labels:
+            - __meta_kubernetes_pod_label_app_kubernetes_io_managed_by
+            - __meta_kubernetes_pod_label_managed_by
+          target_label: managed_by
+        - source_labels:
+            - __meta_kubernetes_namespace
+          target_label: namespace
+        - source_labels:
+            - __meta_kubernetes_pod_name
+          target_label: pod
+        - source_labels:
+            - __meta_kubernetes_pod_container_name
+          target_label: container
+        - source_labels:
+            - __meta_kubernetes_pod_node_name
+          target_label: node
+        - action: replace
+          replacement: $1
+          source_labels:
+            - __meta_kubernetes_pod_label_app_kubernetes_io_name
+            - __meta_kubernetes_pod_label_app
+            - __meta_kubernetes_pod_label_name
+            - __meta_kubernetes_pod_name
+          target_label: job
+        - action: replace
+          replacement: ${1}
+          source_labels:
+            - __meta_kubernetes_namespace
+            - __meta_kubernetes_pod_name
+          target_label: __path__
+          regex: (.+)/(.+)
+        - action: labelmap
+          regex: __meta_kubernetes_pod_label_(.+)
+        - source_labels:
+            - __meta_kubernetes_pod_annotation_prometheus_io_scrape
+          action: keep
+          regex: true
+        - source_labels:
+            - __meta_kubernetes_pod_annotation_prometheus_io_path
+          action: replace
+          target_label: __metrics_path__
+          regex: (.+)
+        - source_labels:
+            - __address__
+            - __meta_kubernetes_pod_annotation_prometheus_io_port
+          action: replace
+          regex: ([^:]+)(?::\d+)?;(\d+)
+          replacement: $1:$2
+          target_label: __address__
+        - action: labelmap
+          regex: __meta_kubernetes_pod_annotation_prometheus_io_param_(.+)
+          replacement: __param_$1
+        - source_labels:
+            - __meta_kubernetes_pod_annotation_prometheus_io_scrape
+          action: replace
+          target_label: __meta_kubernetes_service_annotation_prometheus_io_scrape
+          regex: true
+        - source_labels:
+            - __meta_kubernetes_pod_annotation_prometheus_io_scheme
+          action: replace
+          target_label: __meta_kubernetes_service_annotation_prometheus_io_scheme
+          regex: (https?)
+        - source_labels:
+            - __meta_kubernetes_pod_annotation_prometheus_io_path
+          action: replace
+          target_label: __meta_kubernetes_service_annotation_prometheus_io_path
+          regex: (.+)
+        - source_labels:
+            - __address__
+            - __meta_kubernetes_pod_annotation_prometheus_io_port
+          action: replace
+          regex: ([^:]+)(?::\d+)?;(\d+)
+          replacement: $1:$2
+          target_label: __meta_kubernetes_service_annotation_prometheus_io_port
+        - action: labelmap
+          regex: __meta_kubernetes_pod_annotation_prometheus_io_param_(.+)
+          replacement: __meta_kubernetes_service_annotation_prometheus_io_param_$1
+
+    # System logs
+    - job_name: system
+      static_configs:
+        - targets:
+            - localhost
+          labels:
+            job: varlogs
+            __path__: /var/log/*log
+
+    # Container logs
+    - job_name: containers
+      static_configs:
+        - targets:
+            - localhost
+          labels:
+            job: containerlogs
+            __path__: /var/lib/docker/containers/*/*log
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+service:
+  type: ClusterIP 
